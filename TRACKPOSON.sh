@@ -8,7 +8,8 @@ te=GYPSY #$4 #te_name
 DIR=/data3/projects/arabica_ltr/TRACK2 #output_DIR
 DB=/data3/projects/arabica_ltr/dbs/retroTEs/Gypsy #path_to_TE-bowtie2_index
 blast_ref_database=/data3/projects/arabica_ltr/dbs/coffea_arabica_v0.6_06.25.19.fasta #$path_to_blast_ref_database
-python_script=/data3/projects/arabica_ltr/TRACKPOSON/parse_blast_file.py # path to python script
+splitter_script=/data3/projects/arabica_ltr/TRACKPOSON/split_files.py
+python_script=/data3/projects/arabica_ltr/TRACKPOSON/parse_blast_file.py #$path_to_find_insertion_point.pl
 win="/data3/projects/arabica_ltr/dbs/coffea_arabica_v0.6_06.25.19.fasta.bed" #$path_to_ref_genome_10kbpwindows.bed
 ########################
 #######################
@@ -24,15 +25,15 @@ bowtie2 --time --end-to-end  -k 1 --very-fast -p $cores -x $DB  -1 $fq1 -2 $fq2 
 samtools view "$out"-vs-"$te".bam | awk -F "\t" '{if ( ($1!~/^@/) && (($2==69) || ($2==133) || ($2==165) || ($2==181) || ($2==101) || ($2==117)) ) {print ">"$1"\n"$10}}' > $out-vs-$te.fa
 
 ######blast fa against reference genome (IRGSP1.0) for identification insertion point
-
-# we changed blast output to save only important informacion in tabular format, which can reduce the execution time
-# due to we reduced the writing operations
 blastn -db $blast_ref_database -query $out-vs-$te.fa -out $out-vs-$te.fa.bl -outfmt "6 sseqid sstart send qseqid"  -num_threads $cores -evalue 1e-20 #8 -evalue 1e-20
+#blastn -db $blast_ref_database -query $out-vs-$te.fa -out $out-vs-$te.fa.bl -num_threads $cores -evalue 1e-20 #8 -evalue 1e-20
 
 ######parse blast output to finde TE insertion point ##### filter reads that has more than 1 hit (a match with more than one database sequence)
 
+python ${splitter_script} $out-vs-$te.fa.bl $cores
+
 #bedtools needs a file which format has startPos < endPos
-python $python_script $out-vs-$te.fa.bl $out-vs-$te.bed $cores
+python ${python_script} $out-vs-$te.fa.bl $out-vs-$te.bed $cores
 
 echo "Blast finished"
 
@@ -46,6 +47,6 @@ bedtools coverage -counts -nonamecheck -a $win -b $out-vs-$te.sort.bed | awk -F 
 
 echo "bedtools finished"
 ######cleaning temporary files
-rm $out-vs-$te.bam
-rm $out-vs-$te.fa*
-rm $out-vs-$te.bed
+#rm $out-vs-$te.bam
+#rm $out-vs-$te.fa*
+#rm $out-vs-$te.bed

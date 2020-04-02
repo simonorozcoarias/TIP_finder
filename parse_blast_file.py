@@ -21,12 +21,13 @@ def createDicc(blastfile, id):
 			readHits[read] = chrlist
 	print("Finishing Thread "+str(id))
 	fileTh.close()
-	os.remove(blastfile+"."+str(id))
 	return readHits
 
 
-def parseBlastOutput(lines, DiccReadHits, lines_per_procs, x):
+def parseBlastOutput(blastfile, DiccReadHits, id):
 	print("Initialing Thread "+str(id))
+        fileTh = open(blastfile+"."+str(id),'r')
+	lines = fileTh.readlines()
 	partialResults = []
 	for line in lines:
 		columns = line.split('\t')
@@ -37,35 +38,13 @@ def parseBlastOutput(lines, DiccReadHits, lines_per_procs, x):
 			else:
 				partialResults.append(columns[0]+"\t"+columns[1]+"\t"+columns[2]+"\t"+read)
 	print("Finishing Thread "+str(id))
+	os.remove(blastfile+"."+str(id))
 	return partialResults
 
 if __name__ == '__main__':
 	blastfile = sys.argv[1]
 	outputfile = sys.argv[2]
 	threads = int(sys.argv[3])
-
-	start = time.time()
-	# reading input blast file
-	blastf = open(blastfile, 'r')
-	openfile = blastf.readlines()
-	finish = time.time()
-	print("Read blast file done! time="+str(finish - start))
-
-	# splitting original blast file in chuncks for each thread
-	start = time.time()
-	lines_per_procs = int(len(openfile)/threads)+1
-	for th in range(threads):
-		init = th*lines_per_procs + th
-		end = (th*lines_per_procs + th) + lines_per_procs - 1
-		fileTh = open(blastfile+"."+str(th),'w')
-		for line in openfile[init:end]:
-			fileTh.write(line)
-		fileTh.close()
-	blastf.close()
-	openfile = None
-	gc.collect()
-	finish = time.time()
-	print("Split file in chuncks done! time="+str(finish - start))
 
 	# calculating how many lines will be processed by each thread
 	start = time.time()
@@ -89,7 +68,7 @@ if __name__ == '__main__':
 	# searching for reads with maximum 1 hits
 	start = time.time()
 	pool = multiprocessing.Pool(processes=threads)
-	localresults = [pool.apply_async(parseBlastOutput, args=(openfile[(x*lines_per_procs + x): ((x*lines_per_procs + x) + lines_per_procs - 1)], DiccReadHits, lines_per_procs, x)) for x in range(threads)]
+	localresults = [pool.apply_async(parseBlastOutput, args=(blastfile, DiccReadHits, x)) for x in range(threads)]
 	results = [p.get() for p in localresults]
 	openoutputfile = open(outputfile, 'w')
 	for partial in results:
