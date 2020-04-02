@@ -2,8 +2,9 @@ import sys
 import multiprocessing
 import time
 import os
+import gc
 
-def createDicc(blastf, id):
+def createDicc(blastfile, id):
 	print("Initialing Thread "+str(id))
 	fileTh = open(blastfile+"."+str(id),'r')
 	lines = fileTh.readlines()
@@ -62,6 +63,7 @@ if __name__ == '__main__':
 		fileTh.close()
 	blastf.close()
 	openfile = None
+	gc.collect()
 	finish = time.time()
 	print("Split file in chuncks done! time="+str(finish - start))
 
@@ -69,7 +71,7 @@ if __name__ == '__main__':
 	start = time.time()
 	# execute in multiprocess mode
 	pool = multiprocessing.Pool(processes=threads)
-	localresults = [pool.apply_async(createDicc, args=(blastf, x)) for x in range(threads)]
+	localresults = [pool.apply_async(createDicc, args=(blastfile, x)) for x in range(threads)]
 	# join all partial results in one
 	results = [p.get() for p in localresults]
 	DiccReadHits = {}
