@@ -24,8 +24,10 @@ bowtie2 --time --end-to-end  -k 1 --very-fast -p $cores -x $DB  -1 $fq1 -2 $fq2 
 samtools view "$out"-vs-"$te".bam | awk -F "\t" '{if ( ($1!~/^@/) && (($2==69) || ($2==133) || ($2==165) || ($2==181) || ($2==101) || ($2==117)) ) {print ">"$1"\n"$10}}' > $out-vs-$te.fa
 
 ######blast fa against reference genome (IRGSP1.0) for identification insertion point
+
+# we changed blast output to save only important informacion in tabular format, which can reduce the execution time
+# due to we reduced the writing operations
 blastn -db $blast_ref_database -query $out-vs-$te.fa -out $out-vs-$te.fa.bl -outfmt "6 sseqid sstart send qseqid"  -num_threads $cores -evalue 1e-20 #8 -evalue 1e-20
-#blastn -db $blast_ref_database -query $out-vs-$te.fa -out $out-vs-$te.fa.bl -num_threads $cores -evalue 1e-20 #8 -evalue 1e-20
 
 ######parse blast output to finde TE insertion point ##### filter reads that has more than 1 hit (a match with more than one database sequence)
 
