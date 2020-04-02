@@ -8,7 +8,7 @@ te=GYPSY #$4 #te_name
 DIR=/data3/projects/arabica_ltr/TRACK2 #output_DIR
 DB=/data3/projects/arabica_ltr/dbs/retroTEs/Gypsy #path_to_TE-bowtie2_index
 blast_ref_database=/data3/projects/arabica_ltr/dbs/coffea_arabica_v0.6_06.25.19.fasta #$path_to_blast_ref_database
-python_script=/data3/projects/arabica_ltr/TRACKPOSON/parse_blast_file.py #$path_to_find_insertion_point.pl
+python_script=/data3/projects/arabica_ltr/TRACKPOSON/parse_blast_file.py # path to python script
 win="/data3/projects/arabica_ltr/dbs/coffea_arabica_v0.6_06.25.19.fasta.bed" #$path_to_ref_genome_10kbpwindows.bed
 ########################
 #######################
@@ -44,6 +44,6 @@ bedtools coverage -counts -nonamecheck -a $win -b $out-vs-$te.sort.bed | awk -F 
 
 echo "bedtools finished"
 ######cleaning temporary files
-#rm $out-vs-$te.bam
-#rm $out-vs-$te.fa*
-#rm $out-vs-$te.bed
+rm $out-vs-$te.bam
+rm $out-vs-$te.fa*
+rm $out-vs-$te.bed
