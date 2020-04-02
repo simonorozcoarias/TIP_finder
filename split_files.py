@@ -1,16 +1,12 @@
 import sys
-import time
 
 if __name__ == '__main__':
         blastfile = sys.argv[1]
         threads = int(sys.argv[2])
 
-        start = time.time()
         # reading input blast file
         blastf = open(blastfile, 'r')
         openfile = blastf.readlines()
-        finish = time.time()
-        print("Read blast file done! time="+str(finish - start))
 
         # splitting original blast file in chuncks for each thread
         start = time.time()

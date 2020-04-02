@@ -1,11 +1,8 @@
 import sys
 import multiprocessing
-import time
 import os
-import gc
 
 def createDicc(blastfile, id):
-	print("Initialing Thread "+str(id))
 	fileTh = open(blastfile+"."+str(id),'r')
 	lines = fileTh.readlines()
 	readHits = {}
@@ -19,13 +16,11 @@ def createDicc(blastfile, id):
 		else:
 			chrlist = [chrs]
 			readHits[read] = chrlist
-	print("Finishing Thread "+str(id))
 	fileTh.close()
 	return readHits
 
 
 def parseBlastOutput(blastfile, DiccReadHits, id):
-	print("Initialing Thread "+str(id))
         fileTh = open(blastfile+"."+str(id),'r')
 	lines = fileTh.readlines()
 	partialResults = []
@@ -37,7 +32,6 @@ def parseBlastOutput(blastfile, DiccReadHits, id):
 				partialResults.append(columns[0]+"\t"+columns[2]+"\t"+columns[1]+"\t"+read)
 			else:
 				partialResults.append(columns[0]+"\t"+columns[1]+"\t"+columns[2]+"\t"+read)
-	print("Finishing Thread "+str(id))
 	os.remove(blastfile+"."+str(id))
 	return partialResults
 
@@ -47,7 +41,6 @@ if __name__ == '__main__':
 	threads = int(sys.argv[3])
 
 	# calculating how many lines will be processed by each thread
-	start = time.time()
 	# execute in multiprocess mode
 	pool = multiprocessing.Pool(processes=threads)
 	localresults = [pool.apply_async(createDicc, args=(blastfile, x)) for x in range(threads)]
@@ -62,11 +55,8 @@ if __name__ == '__main__':
 						DiccReadHits[key].append(chrs)
 			else:
 				DiccReadHits[key] = dicc[key]
-	finish = time.time()
-	print("create dicc with reads done! time="+str(finish - start))
 
 	# searching for reads with maximum 1 hits
-	start = time.time()
 	pool = multiprocessing.Pool(processes=threads)
 	localresults = [pool.apply_async(parseBlastOutput, args=(blastfile, DiccReadHits, x)) for x in range(threads)]
 	results = [p.get() for p in localresults]
@@ -74,7 +64,5 @@ if __name__ == '__main__':
 	for partial in results:
 		for line in partial:
 			openoutputfile.write(line+"\n")
-	finish = time.time()
-	print("filter reads with one hit done! time="+str(finish - start))
 	# closing files
 	openoutputfile.close()
