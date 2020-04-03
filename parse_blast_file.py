@@ -1,6 +1,7 @@
 import sys
 import multiprocessing
 import os
+import gc
 
 def createDicc(blastfile, id):
 	fileTh = open(blastfile+"."+str(id),'r')
@@ -21,7 +22,7 @@ def createDicc(blastfile, id):
 
 
 def parseBlastOutput(blastfile, DiccReadHits, id):
-        fileTh = open(blastfile+"."+str(id),'r')
+	fileTh = open(blastfile+"."+str(id),'r')
 	lines = fileTh.readlines()
 	partialResults = []
 	for line in lines:
@@ -55,6 +56,11 @@ if __name__ == '__main__':
 						DiccReadHits[key].append(chrs)
 			else:
 				DiccReadHits[key] = dicc[key]
+
+	pool = None
+	localresults = None
+	results = None
+	gc.collect()
 
 	# searching for reads with maximum 1 hits
 	pool = multiprocessing.Pool(processes=threads)
