@@ -47,10 +47,6 @@ def parseBlastOutput(blastfile, DiccReadHits, id, init, end):
 	return partialResults
 
 if __name__ == '__main__':
-	blastfile = sys.argv[1]
-	outputfile = sys.argv[2]
-	fileLen = int(sys.argv[3])
-
 	### Global variables
 	global comm, rank, size, rank_msg
 
@@ -59,19 +55,23 @@ if __name__ == '__main__':
 	threads = comm.Get_size()
 	rank = comm.Get_rank()
 	rank_msg = '[Rank '+str(rank)+' msg]'
-	print(rank_msg)
+
+	blastfile = sys.argv[1]
+	outputfile = sys.argv[2]
+	fileLen = int(sys.argv[3])
 	lines_per_procs = int(fileLen/(threads - 1))+1
 	remain = fileLen % threads
 
+	#comm.Barrier()
+	print(rank_msg)
 	# master process
 	if rank == 0:
-		print("starting master process")
 		### launch dic creation
 		DiccReadHits = {}
 		for th in range(1, threads):
 			comm.send(1, dest=th)
 
-		for th in range(threads):
+		for th in range(1, threads):
 			partialDic = comm.recv(source=th)
 			# join all partial results
 			for key in partialDic.keys():
@@ -81,29 +81,23 @@ if __name__ == '__main__':
 							DiccReadHits[key].append(chrs)
 				else:
 					DiccReadHits[key] = partialDic[key]
-			print("Process "+str(th)+" finished")
-		print("all Process finished")
 		########################################################
 		# searching for reads with maximum 1 hits
-		print("starting master process in searching one hit")
 		for th in range(1, threads):
 			comm.send(DiccReadHits, dest=th)
 
 		openoutputfile = open(outputfile, 'w')
-		for th in range(threads):
+		for th in range(1, threads):
 			partialLines = comm.recv(source=th)
 			for line in partialLines:
 				openoutputfile.write(line+"\n")
-			print("Process "+str(th)+" finished")
 		openoutputfile.close()
-		print("all Process finished")
 
 	else: # slave processes
 		### launch dic creation
 		data = comm.recv(source=0)
-		print("starting process "+str(rank)+" in dic creation")
 		th = rank - 1
-		if rank < remain:
+		if th < remain:
 			init = th * (lines_per_procs + 1)
 			end = init + lines_per_procs + 1
 		else:
@@ -111,10 +105,10 @@ if __name__ == '__main__':
 			end = init + lines_per_procs
 		partial = createDicc(blastfile, rank, init, end)
 		comm.send(partial, dest=0)
+		
 		########################################################
 		# searching for reads with maximum 1 hits
 		diccFromMaster = comm.recv(source=0)
-		print("starting process "+str(rank)+" in searching one hit")
 		th = rank - 1
 		if th < remain:
 			init = th * (lines_per_procs + 1)
