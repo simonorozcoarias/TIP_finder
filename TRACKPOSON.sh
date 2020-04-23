@@ -30,10 +30,11 @@ blastn -db $blast_ref_database -query $out-vs-$te.fa -out $out-vs-$te.fa.bl -out
 
 ######parse blast output to finde TE insertion point ##### filter reads that has more than 1 hit (a match with more than one database sequence)
 
-python ${splitter_script} $out-vs-$te.fa.bl $cores
+#python ${splitter_script} $out-vs-$te.fa.bl $cores
+lines=`wc -l $out-vs-$te.fa.bl | cut -f1 -d" "`
 
 #bedtools needs a file which format has startPos < endPos
-python ${python_script} $out-vs-$te.fa.bl $out-vs-$te.bed $cores
+python ${python_script} $out-vs-$te.fa.bl $out-vs-$te.bed $cores $lines
 
 echo "Blast finished"
 
