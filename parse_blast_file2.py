@@ -52,7 +52,7 @@ if __name__ == '__main__':
 	threads = int(sys.argv[3])
 
 	start = time.time()
-	# reading input blast file
+	# reading input blast file 
 	blastf = open(blastfile, 'r')
 	openfile = blastf.readlines()
 	finish = time.time()
