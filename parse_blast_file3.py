@@ -56,12 +56,8 @@ if __name__ == '__main__':
 	start = time.time()
 	# execute in multiprocess mode
 	processes = []
-	#blastf = open(blastfile, 'r')
-	#openfile = blastf.readlines()
 	lines_per_procs = int(fileLen/threads)+1
 	remain = fileLen % threads
-	#openfile = None
-	#blastf.close()
 	# Run processes
 	for th in range(threads):
 		if th < remain:
@@ -77,7 +73,6 @@ if __name__ == '__main__':
 	print("all Process finished")
 	# join all partial results in one
 	results = [output.get() for p in processes]
-	#print(results)
 	DiccReadHits = {}
 	for dicc in results:
 		for key in dicc.keys():
