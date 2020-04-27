@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import chi2_contingency
 from scipy.stats import chi2
+import argparse
 
 
 def createFinalMatrix(te, directory, outputDir, map_th):
@@ -160,45 +161,90 @@ def associationTest(filetips, individuals, prob):
 	print("TIPs with statistical assocation: "+str(len(assocations)))
 	assocations.to_csv(outputDir+'/TIPS_with_association.csv')
 
-
-
 if __name__ == '__main__':
+	print("\n##############################################################\n\n")
+	print("TEIPfinder Utils: Transposable Element Insertion Polymorphism finder utilities\n\n")
+	print("##############################################################\n\n")
+
 	### read parameters
-	util = sys.argv[1] # util to be used 
-	te = sys.argv[2] # TE family name
-	outputDir = sys.argv[3] # directory which will contain results
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-u','--util',dest='util',help='Utility to be used, must be: finalMatrix or histograms or peaks or association')
+	parser.add_argument('-t','--te',dest='te',help='TE family name')
+	parser.add_argument('-o','--output-dir',dest='outputDir',help='Path of the output directory')
+	parser.add_argument('-d','--directory',dest='directory',help='Directory which contains coveraged files. (used in finalMatrix util).')
+	parser.add_argument('-m','--map-thr',dest='map_th',help='Minimum number of maps. Default 5. (used in finalMatrix util).')
+	parser.add_argument('-f','--matrix-path',dest='matrixPath',help='Path to the final matrix. (used in histograms util).')
+	parser.add_argument('-1','--case1-matrix',dest='matrixPathCase1',help='Path to the final matrix of case 1. (used in peaks and association utilities).')
+	parser.add_argument('-2','--case2-matrix',dest='matrixPathCase2',help='Path to the final matrix of case 2. (used in peaks and association utilities).')
+	parser.add_argument('-w','--windows',type=int,dest='windows',help='Window length to graph TIPs. Dafault 1000000. (used in peaks util)')
+	parser.add_argument('-n','--confidence-level',type=float,dest='prob',help='confidence level used in association tests. Dafault 0.95. (used in association util)')
+	parser.add_argument('-v','--version',action='version', version='%(prog)s v1.0')
+
+	(options,arguments) = parser.parse_args()
+	util = options.util
+	te = options.te
+	outputDir = options.outputDir
+	directory = options.directory
+	map_th = options.map_th
+	matrixPath = options.matrixPath
+	matrixPathCase1 = options.matrixPathCase1
+	matrixPathCase2 = options.matrixPathCase2
+	prob = options.prob
+	windows = options.windows
+
+	if util == None:
+		print('Missing util parameter (-u or --util). Exiting')
+		sys.exit(0)
+	if te == None:
+		print('Missing name of the TE family (-t or --te). Exiting')
+		sys.exit(0)
+	if outputDir == None:
+		print('Missing output directory (-o or --output-dir). Exiting')
+		sys.exit(0)
 	
-	### change value of these parameters before execute
-	map_th = 5 # used in final Matrix util
-	windows = 1000000 # used in peaks util
-	prob = 0.95 # used in association analysis (confidence level)
-	##############################################################
-
-	print("##############################################################")
-	print("TEIPfinder: Transposable Element Insertion Polymorphism finder")
-	print("##############################################################")
-
+	### execution of utilities
 	if util == "finalMatrix":
-		directory = sys.argv[4] # directory with all coveraged files
-		createFinalMatrix(te, directory, outputDir, map_th)
+		if directory == None:
+			print('Missing input directory (-d or --directory). Exiting')
+			sys.exit(0)
+		if map_th == None:
+			print('Missing minimum number of maps (-m or --map-thr). Using by default 5')
+			map_th = 5
+		createFinalMatrix(te, directory, outputDir, int(map_th))
 	elif util == "histograms":
-		matrixPath = sys.argv[4]
+		if matrixPath == None:
+			print('Missing path to the final matrix (-f or --matrix-path). Exiting')
+			sys.exit(0)
 		histograms(outputDir, matrixPath)
 	elif util == "peaks":
-		matrixPathCase1 = sys.argv[4]
-		matrixPathCase2 = sys.argv[5]
+		if matrixPathCase1 == None:
+			print('Missing path to the matrix of individuals from case 1 (-1 or --case1-matrix). Exiting')
+			sys.exit(0)
+		if matrixPathCase2 == None:
+			print('Missing path to the matrix of individuals from case 2 (-2 or --case2-matrix). Exiting')
+			sys.exit(0)
+		if windows == None:
+			print('Missing window length to be used in graphs (-w or --windows). Using by default 1000000')
+			windows = 1000000
 		### to count number of TIPs by cases
 		individuals = countPerChrs(matrixPathCase1, matrixPathCase2, outputDir, 1) # graph 1 indicates create graphs, otherwise indicates do not generate graphs.
 		print(str(individuals)+" individuals processed")
 		### using file created by countPerChrs, count number of TIPs per a given window size
-		countPerWindow(outputDir+"/TIPscount_cases.csv", windows)
+		countPerWindow(outputDir+"/TIPscount_cases.csv", int(windows))
 	elif util == "association":
-		matrixPathCase1 = sys.argv[4]
-		matrixPathCase2 = sys.argv[5]
+		if matrixPathCase1 == None:
+			print('Missing path to the matrix of individuals from case 1 (-1 or --case1-matrix). Exiting')
+			sys.exit(0)
+		if matrixPathCase2 == None:
+			print('Missing path to the matrix of individuals from case 2 (-2 or --case2-matrix). Exiting')
+			sys.exit(0)
+		if prob == None:
+			print('Missing confidence level (-n or --confidence-level). Using by default 0.95')
+			prob = 0.95
 		### to count number of TIPs by cases
 		individuals = countPerChrs(matrixPathCase1, matrixPathCase2, outputDir, 0)
 		print(str(individuals)+" individuals processed")
-		associationTest(outputDir+"/TIPscount_cases.csv", individuals, prob)		
+		associationTest(outputDir+"/TIPscount_cases.csv", individuals, float(prob))		
 	else:
 		print("Util "+util+" did not found")
 		print("Util must be: finalMatrix or histograms or peaks or association")

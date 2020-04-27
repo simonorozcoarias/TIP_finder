@@ -1,9 +1,16 @@
+"""
+ TEIPfinder: Transposable Element Insertion Polymorphism finder
+ © Copyright
+ Developped by Simon Orozco Arias
+ email: simon.orozco.arias@gmail.com
+ 2020
+"""
 import sys
 import multiprocessing
 import time
 import os
 import subprocess
-
+import argparse
 
 output = multiprocessing.Queue()
 output2 = multiprocessing.Queue()
@@ -51,17 +58,43 @@ def parseBlastOutput(blastfile, DiccReadHits, id, output, init, end):
 
 
 if __name__ == '__main__':
+	print("\n\n##############################################################\n\n")
+	print("TEIPfinder: Transposable Element Insertion Polymorphism finder\n\n")
+	print("##############################################################\n\n")
 	### read parameters
-	readsFilePath = sys.argv[1] # file with paths of reads separated with commas with columns: nameOfSample,forwardReads,reverseReads
-	out = sys.argv[2] # name of output files
-	threads = int(sys.argv[3]) # number of cores
-
-	#### thess values must be changed befores execution
-	DIR = "/data3/projects/arabica_ltr/TRACK2" # output_DIR
-	DB = "/data3/projects/arabica_ltr/dbs/retroTEs/Gypsy" # path to TE library bowtie2 index
-	blast_ref_database = "/data3/projects/arabica_ltr/dbs/coffea_arabica_v0.6_06.25.19.fasta" # path to blast ref database
-	win = "/data3/projects/arabica_ltr/dbs/coffea_arabica_v0.6_06.25.19.fasta.bed" # path to ref genome 10kbp windows.bed
-	###########################################################################
+	# usage: python3 TEIPfinder.py -f reads_files.txt -o test -t 12 -bw /data3/projects/arabica_ltr/dbs/retroTEs/Gypsy -bl /data3/projects/arabica_ltr/dbs/coffea_arabica_v0.6_06.25.19.fasta -w /data3/projects/arabica_ltr/dbs/coffea_arabica_v0.6_06.25.19.fasta.bed
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-f','--reads-file',required=True,dest='readsFilePath',help='file with paths of reads file separated with commas with columns: nameOfSample,forwardReads,reverseReads')
+	parser.add_argument('-o','--output-dir',required=True,dest='out',help='path of the output directory')
+	parser.add_argument('-t','--threads',dest='threads',help='number of threads')
+	parser.add_argument('-b','--db-bowtie',required=True,dest='DB',help='path to TE library bowtie2 index')
+	parser.add_argument('-l','--db-blast',required=True,dest='blast_ref_database',help='path to blast reference database')
+	parser.add_argument('-w','--windows',required=True,dest='win',help='path to reference genome 10kbp windows in bed format')
+	(options,arguments) = parser.parse_args()
+	readsFilePath = options.readsFilePath
+	out = options.out
+	threads = options.threads
+	DB = options.DB
+	blast_ref_database = options.blast_ref_database
+	win = options.win
+	if readsFilePath == None:
+		print('Missing path of reads file. Exiting')
+		sys.exit(0)
+	if out == None:
+		print('Missing path of output directory. Exiting')
+		sys.exit(0)
+	if threads == None:
+		threads = 1
+		print('Missing threads, using only 1')
+	if DB == None:
+		print('Missing path to TE library. Exiting')
+		sys.exit(0)
+	if blast_ref_database == None:
+		print('Missing path to reference blast genome. Exiting')
+		sys.exit(0)
+	if win == None:
+		print('Missing path to 10kb-splitted reference genome. Exiting')
+		sys.exit(0)
 
 	readsFile = open(readsFilePath, 'r').readlines()
 	for sample in readsFile:
@@ -94,10 +127,10 @@ if __name__ == '__main__':
 		outputfile = out+'-vs-'+te+'.bed'
 		# execute in multiprocess mode
 		processes = []
-		lines_per_procs = int(int(fileLen)/threads)+1
-		remain = int(fileLen) % threads
+		lines_per_procs = int(int(fileLen)/int(threads))+1
+		remain = int(fileLen) % int(threads)
 		# Run processes
-		for th in range(threads):
+		for th in range(int(threads)):
 			if th < remain:
 				init = th * (lines_per_procs + 1)
 				end = init + lines_per_procs + 1
@@ -130,7 +163,7 @@ if __name__ == '__main__':
 		# searching for reads with maximum 1 hits
 		start = time.time()
 		processes = []
-		for th in range(threads):
+		for th in range(int(threads)):
 			if th < remain:
 				init = th * (lines_per_procs + 1)
 				end = init + lines_per_procs + 1
