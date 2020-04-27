@@ -168,9 +168,9 @@ if __name__ == '__main__':
 
 	### read parameters
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-u','--util',dest='util',help='Utility to be used, must be: finalMatrix or histograms or peaks or association')
-	parser.add_argument('-t','--te',dest='te',help='TE family name')
-	parser.add_argument('-o','--output-dir',dest='outputDir',help='Path of the output directory')
+	parser.add_argument('-u','--util',required=True,dest='util',help='Utility to be used, must be: finalMatrix or histograms or peaks or association')
+	parser.add_argument('-t','--te',required=True,dest='te',help='TE family name')
+	parser.add_argument('-o','--output-dir',required=True,dest='outputDir',help='Path of the output directory')
 	parser.add_argument('-d','--directory',dest='directory',help='Directory which contains coveraged files. (used in finalMatrix util).')
 	parser.add_argument('-m','--map-thr',dest='map_th',help='Minimum number of maps. Default 5. (used in finalMatrix util).')
 	parser.add_argument('-f','--matrix-path',dest='matrixPath',help='Path to the final matrix. (used in histograms util).')

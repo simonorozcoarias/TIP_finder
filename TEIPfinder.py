@@ -66,10 +66,11 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-f','--reads-file',required=True,dest='readsFilePath',help='file with paths of reads file separated with commas with columns: nameOfSample,forwardReads,reverseReads')
 	parser.add_argument('-o','--output-dir',required=True,dest='out',help='path of the output directory')
-	parser.add_argument('-t','--threads',dest='threads',help='number of threads')
+	parser.add_argument('-t','--threads',dest='threads',type=int,help='number of threads')
 	parser.add_argument('-b','--db-bowtie',required=True,dest='DB',help='path to TE library bowtie2 index')
 	parser.add_argument('-l','--db-blast',required=True,dest='blast_ref_database',help='path to blast reference database')
 	parser.add_argument('-w','--windows',required=True,dest='win',help='path to reference genome 10kbp windows in bed format')
+	parser.add_argument('-v','--version',action='version', version='%(prog)s v1.0 stand alone (shared memory)')
 	(options,arguments) = parser.parse_args()
 	readsFilePath = options.readsFilePath
 	out = options.out
