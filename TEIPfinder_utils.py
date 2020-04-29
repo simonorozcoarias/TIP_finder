@@ -136,7 +136,7 @@ def countPerWindow(filetips, windows):
 
 		plt.figure(figsize=(9, 8))
 		plt.plot([x for x in range(0, maximum, windows)], case1, 'b', [x for x in range(0, maximum, windows)], case2, 'r')
-		plt.xlabel('Chromose length')		
+		plt.xlabel('Chromosome length')		
 		plt.savefig(outputDir+'/chr_'+ch+'.png', dpi=300)
 		plt.close()
 		
