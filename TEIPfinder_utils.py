@@ -180,7 +180,7 @@ if __name__ == '__main__':
 	### read parameters
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-u','--util',required=True,dest='util',help='Utility to be used, must be: finalMatrix or histograms or peaks or association')
-	parser.add_argument('-t','--te',required=True,dest='te',help='TE family name')
+	parser.add_argument('-t','--te',dest='te',help='TE family name (used in finalMatrix util)')
 	parser.add_argument('-o','--output-dir',required=True,dest='outputDir',help='Path of the output directory')
 	parser.add_argument('-d','--directory',dest='directory',help='Directory which contains coveraged files. (used in finalMatrix util).')
 	parser.add_argument('-m','--map-thr',dest='map_th',help='Minimum number of maps. Default 5. (used in finalMatrix util).')
@@ -206,9 +206,6 @@ if __name__ == '__main__':
 	if util == None:
 		print('Missing util parameter (-u or --util). Exiting')
 		sys.exit(0)
-	if te == None:
-		print('Missing name of the TE family (-t or --te). Exiting')
-		sys.exit(0)
 	if outputDir == None:
 		print('Missing output directory (-o or --output-dir). Exiting')
 		sys.exit(0)
@@ -218,6 +215,9 @@ if __name__ == '__main__':
 	if util == "finalMatrix":
 		if directory == None:
 			print('Missing input directory (-d or --directory). Exiting')
+			sys.exit(0)
+		if te == None:
+			print('Missing name of the TE family (-t or --te). Exiting')
 			sys.exit(0)
 		if map_th == None:
 			print('Missing minimum number of maps (-m or --map-thr). Using by default 5')
