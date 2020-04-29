@@ -119,6 +119,10 @@ def countPerWindow(filetips, windows):
 	final_count = pd.read_csv(filetips, index_col = 0)
 	### to find the biggest position of a TIP
 	maximum = max([int(x.split("_")[2]) for x in list(final_count.index.values)])
+	ymax1 = max(list(final_count["Case 1"])) 
+	ymax2 = max(list(final_count["Case 2"])) 
+	ymax = max(ymax1,ymax2)
+	max([int(x.split("_")[2]) for x in list(final_count.index.values)])
 	#print(maximum)
 	### to extract uniq id of each chromosome
 	chr_ids = list(dict.fromkeys([x.split("_")[0] for x in list(final_count.index.values)])) 
@@ -136,7 +140,9 @@ def countPerWindow(filetips, windows):
 
 		plt.figure(figsize=(9, 8))
 		plt.plot([x for x in range(0, maximum, windows)], case1, 'b', [x for x in range(0, maximum, windows)], case2, 'r')
-		plt.xlabel('Chromosome length')		
+		plt.xlabel('Chromosome length')	
+		axes = plt.gca()
+		axes.set_ylim([0, ymax])
 		plt.savefig(outputDir+'/chr_'+ch+'.png', dpi=300)
 		plt.close()
 		
