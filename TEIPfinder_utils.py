@@ -1,3 +1,12 @@
+"""
+ TEIPfinder: Transposable Element Insertion Polymorphism finder Utilities
+ © Copyright
+ Developped by Simon Orozco Arias
+ email: simon.orozco.arias@gmail.com
+ 2020
+"""
+
+#!/bin/env python3
 import sys
 import os
 import math
@@ -162,9 +171,11 @@ def associationTest(filetips, individuals, prob):
 	assocations.to_csv(outputDir+'/TIPS_with_association.csv')
 
 if __name__ == '__main__':
-	print("\n##############################################################\n\n")
-	print("TEIPfinder Utils: Transposable Element Insertion Polymorphism finder utilities\n\n")
-	print("##############################################################\n\n")
+	print("\n##################################################################################")
+	print("#                                                                                #")
+	print("# TEIPfinder Utils: Transposable Element Insertion Polymorphism finder utilities #")
+	print("#                                                                                #")
+	print("##################################################################################\n")
 
 	### read parameters
 	parser = argparse.ArgumentParser()
@@ -180,7 +191,7 @@ if __name__ == '__main__':
 	parser.add_argument('-n','--confidence-level',type=float,dest='prob',help='confidence level used in association tests. Dafault 0.95. (used in association util)')
 	parser.add_argument('-v','--version',action='version', version='%(prog)s v1.0')
 
-	(options,arguments) = parser.parse_args()
+	options = parser.parse_args()
 	util = options.util
 	te = options.te
 	outputDir = options.outputDir
@@ -202,6 +213,7 @@ if __name__ == '__main__':
 		print('Missing output directory (-o or --output-dir). Exiting')
 		sys.exit(0)
 	
+	########################################################
 	### execution of utilities
 	if util == "finalMatrix":
 		if directory == None:

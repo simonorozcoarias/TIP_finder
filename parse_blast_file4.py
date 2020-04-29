@@ -6,7 +6,6 @@ import gc
 from mpi4py import MPI
 
 def createDicc(blastfile, id, init, end):
-	#print("Initialing Thread "+str(id))
 	readHits = {}
 	fileTh = open(blastfile)
 	for i, line in enumerate(fileTh):
@@ -22,13 +21,11 @@ def createDicc(blastfile, id, init, end):
 				readHits[read] = chrlist
 		elif i >= end:
 			break
-	#print("Finishing Thread "+str(id))
 	fileTh.close()
 	return readHits
 
 
 def parseBlastOutput(blastfile, DiccReadHits, id, init, end):
-	#print("Initialing Thread "+str(id))
 	partialResults = []
 	fileTh = open(blastfile)
 	for i, line in enumerate(fileTh):
@@ -42,7 +39,6 @@ def parseBlastOutput(blastfile, DiccReadHits, id, init, end):
 					partialResults.append(columns[0]+"\t"+columns[1]+"\t"+columns[2]+"\t"+read)
 		elif i >= end:
 			break
-	#print("Finishing Thread "+str(id)+", size of queue: "+str(sys.getsizeof(output)))
 	fileTh.close()
 	return partialResults
 
@@ -62,7 +58,6 @@ if __name__ == '__main__':
 	lines_per_procs = int(fileLen/(threads - 1))+1
 	remain = fileLen % threads
 
-	#comm.Barrier()
 	print(rank_msg)
 	# master process
 	if rank == 0:
