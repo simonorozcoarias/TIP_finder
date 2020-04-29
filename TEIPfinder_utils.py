@@ -31,10 +31,10 @@ def createFinalMatrix(te, directory, outputDir, map_th):
 	ins_samples = {}
 	file_number = 0
 	for covf in os.listdir(directory):
-		if "coveragebed_"+te in covf:
+		if "coveragebed_" in covf and "-vs-"+te in covf:		
 			file_number += 1
 			lines = open(directory+"/"+covf, 'r').readlines()
-			sample_name = covf.replace("coveragebed_"+te+"-vs-", "").replace("_per10kb.bed", "")
+			sample_name = covf.replace("coveragebed_", "").replace("-vs-"+te, "").replace("_per10kb.bed", "")
 			sample_names.append(sample_name)
 			for line in lines:
 				columns = line.split('\t')
