@@ -123,7 +123,10 @@ def countPerWindow(filetips, windows):
 	#print(maximum)
 	### to extract uniq id of each chromosome
 	chr_ids = list(dict.fromkeys([x.split("_")[0] for x in list(final_count.index.values)])) 
-
+	
+	chrs_case1 = {}
+	chrs_case2 = {}
+	maxNumber = 0
 	for ch in chr_ids:
 		case1 = [0 for x in range(0, int(maximum), int(windows))]
 		case2 = [0 for x in range(0, int(maximum), int(windows))]
@@ -134,16 +137,22 @@ def countPerWindow(filetips, windows):
 				#print("interval "+str(interval)+", total Length: "+str(len(case1))+", insertion: "+ins)
 				case1[interval] += int(final_count.loc[ins, "Case 1"])
 				case2[interval] += int(final_count.loc[ins, "Case 2"])
-				
+		chrs_case1[ch] = case1
+		chrs_case2[ch] = case2
+		
 		ymax1 = max(case1) 
 		ymax2 = max(case2) 
 		ymax = max(ymax1,ymax2)
-
+		if ymax >= maxNumber:
+			maxNumber = ymax
+	
+	for ch in chr_ids:
+				
 		plt.figure(figsize=(9, 8))
-		plt.plot([x for x in range(0, maximum, windows)], case1, 'b', [x for x in range(0, maximum, windows)], case2, 'r')
+		plt.plot([x for x in range(0, maximum, windows)], chrs_case1[ch], 'b', [x for x in range(0, maximum, windows)], chrs_case2[ch], 'r')
 		plt.xlabel('Chromosome length')	
 		axes = plt.gca()
-		axes.set_ylim([0, ymax])
+		axes.set_ylim([0, maxNumber])
 		plt.savefig(outputDir+'/chr_'+ch+'.png', dpi=300)
 		plt.close()
 		
