@@ -1,5 +1,5 @@
 """
- TEIPfinder: Transposable Element Insertion Polymorphism finder Utilities
+ TPIfinder Utils: Transposon Polymorphic Insertion finder Utilities
  © Copyright
  Developped by Simon Orozco Arias
  email: simon.orozco.arias@gmail.com
@@ -187,11 +187,12 @@ def associationTest(filetips, individuals, prob):
 	assocations.to_csv(outputDir+'/TIPS_with_association.csv')
 
 if __name__ == '__main__':
-	print("\n##################################################################################")
-	print("#                                                                                #")
-	print("# TEIPfinder Utils: Transposable Element Insertion Polymorphism finder utilities #")
-	print("#                                                                                #")
-	print("##################################################################################\n")
+	print("\n######################################################################")
+	print("#                                                                    #")
+	print("# TPIfinder Utils: Transposon Polymorphic Insertion finder utilities #")
+	print("#                           Single Node Version                      #")
+	print("#                                                                    #")
+	print("######################################################################\n")
 
 	### read parameters
 	parser = argparse.ArgumentParser()
