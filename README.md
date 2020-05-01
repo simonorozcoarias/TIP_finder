@@ -1,4 +1,4 @@
-# TEIPfinder
+# TPIfinder
 An improved version of TRACKPOSON [1], which detects tranposon insertion polymorphisms, using parallel programming and HPC.
 
 References:
