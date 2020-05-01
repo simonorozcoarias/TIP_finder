@@ -136,12 +136,17 @@ if __name__ == '__main__':
 
 		if extFile1 not in [".fastq", ".fq"]:
 			if rank == 0:
-				print('FATAL ERROR processing '+indname+': forward read file does not have the correct extension (fastq or fq) Exiting')
+				print('FATAL ERROR processing '+indname+': forward read file does not have the correct extension (fastq or fq). Exiting')
 			sys.exit(0)
 
 		if extFile2 not in [".fastq", ".fq"]:
 			if rank == 0:
-				print('FATAL ERROR processing '+indname+': reverse read file does not have the correct extension (fastq or fq) Exiting')
+				print('FATAL ERROR processing '+indname+': reverse read file does not have the correct extension (fastq or fq). Exiting')
+			sys.exit(0)
+		
+		if threads < 2:
+			if rank == 0:
+				print('FATAL ERROR: Minimum number of process is 2, please check and re-run. Exiting')
 			sys.exit(0)
 
 		if rank == 0:
