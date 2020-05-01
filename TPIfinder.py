@@ -1,5 +1,5 @@
 """
- TEIPfinder: Transposable Element Insertion Polymorphism finder
+ TPIfinder: Transposon Polymorphic Insertion finder
  Distributed version
  © Copyright
  Developped by Simon Orozco Arias
@@ -66,12 +66,12 @@ if __name__ == '__main__':
 	rank_msg = '[Rank '+str(rank)+' msg]'
 
 	if rank == 0:
-		print("\n##################################################################")
-		print("#                                                                #")
-		print("# TEIPfinder: Transposable Element Insertion Polymorphism finder #")
-		print("#                      Distributed Version                       #")
-		print("#                                                                #")
-		print("##################################################################\n")
+		print("\n######################################################")
+		print("#                                                    #")
+		print("# TPIfinder: Transposon Polymorphic Insertion finder #")
+		print("#                   Distributed Version              #")
+		print("#                                                    #")
+		print("######################################################\n")
 	
 	########################################################
 	### read parameters
