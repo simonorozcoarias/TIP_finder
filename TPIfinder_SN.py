@@ -1,5 +1,6 @@
 """
  TEIPfinder: Transposable Element Insertion Polymorphism finder
+ Single node version.
  © Copyright
  Developped by Simon Orozco Arias
  email: simon.orozco.arias@gmail.com
