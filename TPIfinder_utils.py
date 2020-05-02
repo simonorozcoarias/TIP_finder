@@ -236,7 +236,7 @@ if __name__ == '__main__':
 			print('Missing name of the TE family (-t or --te). Exiting')
 			sys.exit(0)
 		if map_th == None:
-			print('Missing minimum number of maps (-m or --map-thr). Using by default 5')
+			print('WARNING: Missing minimum number of maps (-m or --map-thr). Using by default 5')
 			map_th = 5
 		createFinalMatrix(te, directory, outputDir, int(map_th))
 	elif util == "histograms":
@@ -252,7 +252,7 @@ if __name__ == '__main__':
 			print('Missing path to the matrix of individuals from case 2 (-2 or --case2-matrix). Exiting')
 			sys.exit(0)
 		if windows == None:
-			print('Missing window length to be used in graphs (-w or --windows). Using by default 1000000')
+			print('WARNING: Missing window length to be used in graphs (-w or --windows). Using by default 1000000')
 			windows = 1000000
 		### to count number of TIPs by cases
 		individuals = countPerChrs(matrixPathCase1, matrixPathCase2, outputDir, 1) # graph 1 indicates create graphs, otherwise indicates do not generate graphs.
@@ -267,7 +267,7 @@ if __name__ == '__main__':
 			print('Missing path to the matrix of individuals from case 2 (-2 or --case2-matrix). Exiting')
 			sys.exit(0)
 		if prob == None:
-			print('Missing confidence level (-n or --confidence-level). Using by default 0.95')
+			print('WARNING: Missing confidence level (-n or --confidence-level). Using by default 0.95')
 			prob = 0.95
 		### to count number of TIPs by cases
 		individuals = countPerChrs(matrixPathCase1, matrixPathCase2, outputDir, 0)
