@@ -190,7 +190,6 @@ if __name__ == '__main__':
 	print("\n######################################################################")
 	print("#                                                                    #")
 	print("# TPIfinder Utils: Transposon Polymorphic Insertion finder utilities #")
-	print("#                           Single Node Version                      #")
 	print("#                                                                    #")
 	print("######################################################################\n")
 
