@@ -20,7 +20,7 @@ import argparse
 
 def createFinalMatrix(te, directory, outputDir, map_th):
 	if os.path.exists(outputDir):
-		print("output directory: "+outputDir+" already exist, be carefully")
+		print("WARNING: output directory: "+outputDir+" already exist, be carefully")
 	else:
 		os.mkdir(outputDir)
 
@@ -220,20 +220,20 @@ if __name__ == '__main__':
 	windows = options.windows
 
 	if util == None:
-		print('Missing util parameter (-u or --util). Exiting')
+		print('FATAL ERROR: Missing util parameter (-u or --util). Exiting')
 		sys.exit(0)
 	if outputDir == None:
-		print('Missing output directory (-o or --output-dir). Exiting')
+		print('FATAL ERROR: Missing output directory (-o or --output-dir). Exiting')
 		sys.exit(0)
 	
 	########################################################
 	### execution of utilities
 	if util == "finalMatrix":
 		if directory == None:
-			print('Missing input directory (-d or --directory). Exiting')
+			print('FATAL ERROR: Missing input directory (-d or --directory). Exiting')
 			sys.exit(0)
 		if te == None:
-			print('Missing name of the TE family (-t or --te). Exiting')
+			print('FATAL ERROR: Missing name of the TE family (-t or --te). Exiting')
 			sys.exit(0)
 		if map_th == None:
 			print('WARNING: Missing minimum number of maps (-m or --map-thr). Using by default 5')
@@ -241,15 +241,15 @@ if __name__ == '__main__':
 		createFinalMatrix(te, directory, outputDir, int(map_th))
 	elif util == "histograms":
 		if matrixPath == None:
-			print('Missing path to the final matrix (-f or --matrix-path). Exiting')
+			print('FATAL ERROR: Missing path to the final matrix (-f or --matrix-path). Exiting')
 			sys.exit(0)
 		histograms(outputDir, matrixPath)
 	elif util == "peaks":
 		if matrixPathCase1 == None:
-			print('Missing path to the matrix of individuals from case 1 (-1 or --case1-matrix). Exiting')
+			print('FATAL ERROR: Missing path to the matrix of individuals from case 1 (-1 or --case1-matrix). Exiting')
 			sys.exit(0)
 		if matrixPathCase2 == None:
-			print('Missing path to the matrix of individuals from case 2 (-2 or --case2-matrix). Exiting')
+			print('FATAL ERROR: Missing path to the matrix of individuals from case 2 (-2 or --case2-matrix). Exiting')
 			sys.exit(0)
 		if windows == None:
 			print('WARNING: Missing window length to be used in graphs (-w or --windows). Using by default 1000000')
@@ -261,10 +261,10 @@ if __name__ == '__main__':
 		countPerWindow(outputDir+"/TIPscount_cases.csv", int(windows))
 	elif util == "association":
 		if matrixPathCase1 == None:
-			print('Missing path to the matrix of individuals from case 1 (-1 or --case1-matrix). Exiting')
+			print('FATAL ERROR: Missing path to the matrix of individuals from case 1 (-1 or --case1-matrix). Exiting')
 			sys.exit(0)
 		if matrixPathCase2 == None:
-			print('Missing path to the matrix of individuals from case 2 (-2 or --case2-matrix). Exiting')
+			print('FATAL ERROR: Missing path to the matrix of individuals from case 2 (-2 or --case2-matrix). Exiting')
 			sys.exit(0)
 		if prob == None:
 			print('WARNING: Missing confidence level (-n or --confidence-level). Using by default 0.95')
