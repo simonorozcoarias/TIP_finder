@@ -1,5 +1,5 @@
-# TPIfinder
-An improved version of TRACKPOSON [1], which detects tranposon insertion polymorphisms, using parallel programming and HPC.
+# TIPfinder
+A pipeline that aim to find TIPs activity from TE dynamics, using the methodology proposed by TRACKPOSON [1] and huge genomic datasets. TIPFinder works under HPC techniques, parallel programming and has the capacity of scalability over many computational nodes (or servers) and multi-core architectures, which make it especially functional for applications in massive sequencing projects that demands the current (post) genomic era. 
 
 References:
 
