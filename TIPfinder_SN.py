@@ -1,5 +1,5 @@
 """
- TPIfinder: Transposon Polymorphic Insertion finder
+ TIPfinder: Transposon Polymorphic Insertion finder
  Single node version.
  © Copyright
  Developped by Simon Orozco Arias
@@ -63,7 +63,7 @@ def parseBlastOutput(blastfile, DiccReadHits, id, output, init, end):
 if __name__ == '__main__':
 	print("\n######################################################")
 	print("#                                                    #")
-	print("# TPIfinder: Transposon Polymorphic Insertion finder #")
+	print("# TIPfinder: Transposon Polymorphic Insertion finder #")
 	print("#              Single Node Version                   #")
 	print("#                                                    #")
 	print("######################################################\n")
