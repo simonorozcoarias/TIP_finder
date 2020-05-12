@@ -1,5 +1,5 @@
 """
- TPIfinder Utils: Transposon Polymorphic Insertion finder Utilities
+ TIPfinder Utils: Transposon Polymorphic Insertion finder Utilities
  © Copyright
  Developped by Simon Orozco Arias
  email: simon.orozco.arias@gmail.com
@@ -189,7 +189,7 @@ def associationTest(filetips, individuals, prob):
 if __name__ == '__main__':
 	print("\n######################################################################")
 	print("#                                                                    #")
-	print("# TPIfinder Utils: Transposon Polymorphic Insertion finder utilities #")
+	print("# TIPfinder Utils: Transposon Polymorphic Insertion finder utilities #")
 	print("#                                                                    #")
 	print("######################################################################\n")
 
