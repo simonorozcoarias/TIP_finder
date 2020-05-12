@@ -1,5 +1,5 @@
 """
- TPIfinder: Transposon Polymorphic Insertion finder
+ TIPfinder: Transposon Polymorphic Insertion finder
  Distributed version
  © Copyright
  Developped by Simon Orozco Arias
@@ -68,7 +68,7 @@ if __name__ == '__main__':
 	if rank == 0:
 		print("\n######################################################")
 		print("#                                                    #")
-		print("# TPIfinder: Transposon Polymorphic Insertion finder #")
+		print("# TIPfinder: Transposon Polymorphic Insertion finder #")
 		print("#                   Distributed Version              #")
 		print("#                                                    #")
 		print("######################################################\n")
