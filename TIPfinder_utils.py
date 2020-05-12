@@ -1,7 +1,7 @@
 """
  TIPfinder Utils: Transposon Polymorphic Insertion finder Utilities
  © Copyright
- Developped by Simon Orozco Arias
+ Developed by Simon Orozco Arias
  email: simon.orozco.arias@gmail.com
  2020
 """
