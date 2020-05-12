@@ -2,7 +2,7 @@
  TIPfinder: Transposon Polymorphic Insertion finder
  Distributed version
  © Copyright
- Developped by Simon Orozco Arias
+ Developed by Simon Orozco Arias
  email: simon.orozco.arias@gmail.com
  2020
 """
