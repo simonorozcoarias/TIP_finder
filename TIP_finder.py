@@ -53,6 +53,28 @@ def parseBlastOutput(blastfile, DiccReadHits, id, init, end):
 	return partialResults
 
 
+def receive_mpi_msg(src=MPI.ANY_SOURCE, t=MPI.ANY_TAG, deserialize=False):
+	"""
+	Sending MPI messages
+	"""
+	data_dict = {}
+	status = MPI.Status()
+	data = comm.recv(source=src, tag=t, status=status)
+	if deserialize: 
+		data = pickle.loads(data)
+	data_dict['data'] = data
+	data_dict['sender'] = int(status.Get_source())
+	return data_dict
+
+
+def send_mpi_msg(destination, data, serialize=False):
+	"""
+	Sending MPI messages
+	"""
+	if serialize: 
+		data = pickle.dumps(data)
+	comm.send(data, dest=destination)
+
 if __name__ == '__main__':
 
 	########################################################
@@ -121,7 +143,7 @@ if __name__ == '__main__':
 	### creating (if does not exist) the output directory
 	if rank == 0:
 		if os.path.exists(out):
-			print("WARNING: output directory "+out+" already exist, be careful")
+			print("WARNING: output directory "+out+" already exist, be carefully")
 		else:
 			os.mkdir(out)
 
@@ -181,11 +203,14 @@ if __name__ == '__main__':
 			### Launch mapping, keeping unmaped reads and blast processes
 			start = time.time()
 			for th in range(1, threads):
-				comm.send(1, dest=th)
+				send_mpi_msg(th,1,serialize=True)
+				# comm.send(1, dest=th)
 
 			finalBlastFile = open(blastfile, 'w')
 			for th in range(1, threads):
-				data = comm.recv(source=th)
+				data_dict = receive_mpi_msg(deserialize=True)
+				data = data_dict['data']
+				# data = comm.recv(source=th)
 				thFile =  open(out+"/"+indname+'-vs-'+te+'.fa.bl.'+str(th), 'r').readlines()
 				for line in thFile:
 					finalBlastFile.write(line)
@@ -205,10 +230,13 @@ if __name__ == '__main__':
 			fileLen = int(process.stdout)
 			DiccReadHits = {}
 			for th in range(1, threads):
-				comm.send(fileLen, dest=th)
+				send_mpi_msg(th,1,serialize=True)
+				# comm.send(fileLen, dest=th)
 
 			for th in range(1, threads):
-				partialDic = comm.recv(source=th)
+				data_dict = receive_mpi_msg(deserialize=True)
+				partialDic = data_dict['data']
+				# partialDic = comm.recv(source=th)
 				# join all partial results
 				for key in partialDic.keys():
 					if key in DiccReadHits.keys():
@@ -225,11 +253,14 @@ if __name__ == '__main__':
 			### process blast output to create a bed file
 			start = time.time()
 			for th in range(1, threads):
-				comm.send(DiccReadHits, dest=th)
+				send_mpi_msg(th, DiccReadHits, serialize=True)
+				# comm.send(DiccReadHits, dest=th)
 
 			openoutputfile = open(outputfile, 'w')
 			for th in range(1, threads):
-				partialLines = comm.recv(source=th)
+				data_dict = receive_mpi_msg(deserialize=True)
+				partialLines = data_dict['data']
+				# partialLines = comm.recv(source=th)
 				for line in partialLines:
 					openoutputfile.write(line+"\n")
 			openoutputfile.close()
@@ -256,7 +287,9 @@ if __name__ == '__main__':
 		
 		### slave processes
 		else:
-			data = comm.recv(source=0)
+			data_dict = receive_mpi_msg(deserialize=True)
+			data = data_dict['data']
+			# data = comm.recv(source=0)
 			th = rank - 1
 			if th < remain:
 				init = th * (reads_per_procs + 1)
@@ -301,11 +334,14 @@ if __name__ == '__main__':
 			### blast against reference genome for identification insertion point
 			blastCommand = 'blastn -db '+blast_ref_database+' -query '+out+"/"+indname+'-vs-'+te+'.fa.'+str(rank)+' -out '+out+"/"+indname+'-vs-'+te+'.fa.bl.'+str(rank)+' -outfmt "6 sseqid sstart send qseqid"  -num_threads 1 -evalue 1e-20'
 			subprocess.run(blastCommand, shell=True)
-			comm.send(1, dest=0)
+			send_mpi_msg(0, 1, serialize=True)
+			# comm.send(1, dest=0)
 
 			########################################################
 			### launch dic creation
-			fileLen = comm.recv(source=0)
+			data_dict = receive_mpi_msg(deserialize=True)
+			fileLen = data_dict['data']
+			# fileLen = comm.recv(source=0)
 			lines_per_procs = int(int(fileLen)/int(threads-1))+1
 			remain = int(fileLen) % int(threads)
 			th = rank - 1
@@ -316,11 +352,14 @@ if __name__ == '__main__':
 				init = th * lines_per_procs + remain
 				end = init + lines_per_procs
 			partial = createDicc(blastfile, rank, init, end)
-			comm.send(partial, dest=0)
+			send_mpi_msg(0, partial, serialize=True)
+			# comm.send(partial, dest=0)
 			
 			########################################################
 			# searching for reads with maximum 1 hits
-			diccFromMaster = comm.recv(source=0)
+			data_dict = receive_mpi_msg(deserialize=True)
+			diccFromMaster = data_dict['data']
+			# diccFromMaster = comm.recv(source=0)
 			th = rank - 1
 			if th < remain:
 				init = th * (lines_per_procs + 1)
@@ -329,7 +368,8 @@ if __name__ == '__main__':
 				init = th * lines_per_procs + remain
 				end = init + lines_per_procs
 			partial = parseBlastOutput(blastfile, diccFromMaster, rank, init, end)
-			comm.send(partial, dest=0)
+			send_mpi_msg(0, partial, serialize=True)
+			# comm.send(partial, dest=0)
 
 		if rank == 0:
 			print("Done!")
