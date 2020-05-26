@@ -60,7 +60,7 @@ def receive_mpi_msg(src=MPI.ANY_SOURCE, t=MPI.ANY_TAG, deserialize=False):
 	"""
 	data_dict = {}
 	status = MPI.Status()
-	data = comm.recv(source=src, tag=t, status=status)
+	data = float(comm.recv(source=src, tag=t, status=status))
 	if deserialize: 
 		data = pickle.loads(data)
 	data_dict['data'] = data
@@ -74,7 +74,7 @@ def send_mpi_msg(destination, data, serialize=False):
 	"""
 	if serialize: 
 		data = pickle.dumps(data)
-	comm.send(data, dest=destination)
+	comm.send(str(data), dest=destination)
 
 if __name__ == '__main__':
 
