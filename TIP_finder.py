@@ -231,7 +231,7 @@ if __name__ == '__main__':
 			fileLen = int(process.stdout)
 			DiccReadHits = {}
 			for th in range(1, threads):
-				send_mpi_msg(th,1,serialize=True)
+				send_mpi_msg(th,fileLen,serialize=True)
 				# comm.send(fileLen, dest=th)
 
 			for th in range(1, threads):
