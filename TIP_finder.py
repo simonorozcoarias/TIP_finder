@@ -121,7 +121,7 @@ if __name__ == '__main__':
 	### creating (if does not exist) the output directory
 	if rank == 0:
 		if os.path.exists(out):
-			print("WARNING: output directory "+out+" already exist, be carefully")
+			print("WARNING: output directory "+out+" already exist, be careful")
 		else:
 			os.mkdir(out)
 
