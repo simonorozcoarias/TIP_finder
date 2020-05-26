@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
 	########################################################
 	### Global variables
-	global comm, rank, size, rank_msg
+	global comm, rank, threads, rank_msg
 
 	### Parallel process rank assignment
 	comm = MPI.COMM_WORLD
