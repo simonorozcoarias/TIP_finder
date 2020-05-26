@@ -1,5 +1,5 @@
 """
- TIPfinder: Transposon Polymorphic Insertion finder
+ TIP_finder: Transposable Element Insertion Polymorphisms Finder
  Single node version.
  © Copyright
  Developed by Simon Orozco Arias
@@ -61,16 +61,16 @@ def parseBlastOutput(blastfile, DiccReadHits, id, output, init, end):
 
 
 if __name__ == '__main__':
-	print("\n######################################################")
-	print("#                                                    #")
-	print("# TIPfinder: Transposon Polymorphic Insertion finder #")
-	print("#              Single Node Version                   #")
-	print("#                                                    #")
-	print("######################################################\n")
+	print("\n###################################################################")
+	print("#                                                                 #")
+	print("# TIP_finder: Transposable Element Insertion Polymorphisms finder #")
+	print("#                       Single Node Version                       #")
+	print("#                                                                 #")
+	print("###################################################################\n")
 	
 	########################################################
 	### read parameters
-	# usage: python3 TEIPfinder.py -f reads_files.txt -o test -t 12 -bw /data3/projects/arabica_ltr/dbs/retroTEs/Gypsy -bl /data3/projects/arabica_ltr/dbs/coffea_arabica_v0.6_06.25.19.fasta -w /data3/projects/arabica_ltr/dbs/coffea_arabica_v0.6_06.25.19.fasta.bed
+	# usage: python3 TIP_finder.py -f reads_files.txt -o test -t 12 -bw /data3/projects/arabica_ltr/dbs/retroTEs/Gypsy -bl /data3/projects/arabica_ltr/dbs/coffea_arabica_v0.6_06.25.19.fasta -w /data3/projects/arabica_ltr/dbs/coffea_arabica_v0.6_06.25.19.fasta.bed
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-f','--reads-file',required=True,dest='readsFilePath',help='file with paths of reads file separated with commas with columns: nameOfSample,forwardReads,reverseReads')
 	parser.add_argument('-o','--output-dir',required=True,dest='out',help='path of the output directory')
