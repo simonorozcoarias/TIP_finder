@@ -14,6 +14,7 @@ import os
 import subprocess
 import argparse
 from mpi4py import MPI
+import pickle
 
 def createDicc(blastfile, id, init, end):
 	readHits = {}
