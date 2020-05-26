@@ -1,5 +1,5 @@
 """
- TIPfinder: Transposon Polymorphic Insertion finder
+ TIP_finder: Transposable Element Insertion Polymorphisms finder
  Distributed version
  © Copyright
  Developed by Simon Orozco Arias
@@ -66,12 +66,12 @@ if __name__ == '__main__':
 	rank_msg = '[Rank '+str(rank)+' msg]'
 
 	if rank == 0:
-		print("\n######################################################")
-		print("#                                                    #")
-		print("# TIPfinder: Transposon Polymorphic Insertion finder #")
-		print("#                   Distributed Version              #")
-		print("#                                                    #")
-		print("######################################################\n")
+		print("\n###################################################################")
+		print("#                                                                 #")
+		print("# TIP_finder: Transposable Element Insertion Polymorphisms finder #")
+		print("#                   Distributed Version                           #")
+		print("#                                                                 #")
+		print("###################################################################\n")
 	
 	########################################################
 	### read parameters
