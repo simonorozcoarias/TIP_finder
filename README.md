@@ -4,6 +4,10 @@ A pipeline that aim to find TIPs activity from TE dynamics, using the methodolog
 Installation:
 conda install -c anaconda psutil
 
+Usage:
+
+mpirun -np num_processes -hosts=$SLURM_JOB_NODELIST python3.8 TIP_finder.py -f file_reads.txt -o folder_results -t TE_family_name -b bowtie2_indexed_file -l blast_formated_reference_genome.fasta -w 10_kb_splitted_reference_genome.bed
+
 References:
 
 [1] Carpentier, M. C., Manfroi, E., Wei, F. J., Wu, H. P., Lasserre, E., Llauro, C., ... & Panaud, O. (2019). Retrotranspositional landscape of Asian rice revealed by 3000 genomes. Nature communications, 10(1), 1-12.
