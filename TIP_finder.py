@@ -15,8 +15,12 @@ import subprocess
 import argparse
 from mpi4py import MPI
 import pickle
+from psutil import virtual_memory
 
 def createDicc(blastfile, id, init, end):
+	"""
+	Creating a dictionary in order to keep blast hits between reads and chromosomes
+	"""
 	readHits = {}
 	fileTh = open(blastfile)
 	for i, line in enumerate(fileTh):
@@ -36,12 +40,21 @@ def createDicc(blastfile, id, init, end):
 	return readHits
 
 
-def parseBlastOutput(blastfile, id, init, end):
+def parseBlastOutput(blastfile, id, init, end, mem_per_proc):
+	"""
+	Processing the blast output for keeping reads with only one hit
+	"""
 	fileDict = open(out+"/fileDict.tmp.csv", "r").readlines()
-	DiccReadHits = {}
+	setReadHits = set(())
 	for line in fileDict:
-		columns = line.split(",")		
-		DiccReadHits[columns[0]] = columns[1:]
+		columns = line.split(",")
+		if int(columns[1]) < 2:
+			if ((((sys.getsizeof(setReadHits) + sys.getsizeof(columns)) / 1024) /1024) / 1024) > mem_per_proc:
+				if id == 1:
+					print("ERROR: Out of Memory, please increase value in the -m flag or run TIP_finder in a server with more memory")
+				sys.exit(0)	
+			else:	
+				setReadHits.add(columns[0])
 
 	partialResults = []
 	fileTh = open(blastfile)
@@ -49,7 +62,7 @@ def parseBlastOutput(blastfile, id, init, end):
 		if i >= init and i < end:
 			columns = line.split('\t')
 			read = columns[3].replace('\n', '')
-			if len(DiccReadHits[read]) < 2:
+			if read in setReadHits:
 				if int(columns[2]) < int(columns[1]):
 					partialResults.append(columns[0]+"\t"+columns[2]+"\t"+columns[1]+"\t"+read)
 				else:
@@ -106,12 +119,13 @@ if __name__ == '__main__':
 	### read parameters
 	# usage: mpirun -np 60 python3 TEIPfinder_distributed.py -f reads_files.txt -o test -t DEL -b /data3/projects/arabica_ltr/dbs/retroTEs/Gypsy -l /data3/projects/arabica_ltr/dbs/coffea_arabica_v0.6_06.25.19.fasta -w /data3/projects/arabica_ltr/dbs/coffea_arabica_v0.6_06.25.19.fasta.bed
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-f','--reads-file',required=True,dest='readsFilePath',help='file with paths of reads file (in fastq format) separated with commas with columns: nameOfSample,PathForwardReads,PathReverseReads')
-	parser.add_argument('-o','--output-dir',required=True,dest='out',help='path of the output directory')
-	parser.add_argument('-b','--db-bowtie',required=True,dest='DB',help='path to TE library bowtie2 index')
-	parser.add_argument('-l','--db-blast',required=True,dest='blast_ref_database',help='path to blast reference database')
-	parser.add_argument('-w','--windows',required=True,dest='win',help='path to reference genome 10kbp windows in bed format')
-	parser.add_argument('-t','--te',required=True,dest='te',help='name of the TE family')
+	parser.add_argument('-f','--reads-file',required=True, type=str,dest='readsFilePath',help='file with paths of reads file (in fastq format) separated with commas with columns: nameOfSample,PathForwardReads,PathReverseReads')
+	parser.add_argument('-o','--output-dir',required=True, type=str,dest='out',help='path of the output directory')
+	parser.add_argument('-b','--db-bowtie',required=True, type=str,dest='DB',help='path to TE library bowtie2 index')
+	parser.add_argument('-l','--db-blast',required=True, type=str,dest='blast_ref_database',help='path to blast reference database')
+	parser.add_argument('-w','--windows',required=True, type=str,dest='win',help='path to reference genome 10kbp windows in bed format')
+	parser.add_argument('-t','--te',required=True, type=str,dest='te',help='name of the TE family')
+	parser.add_argument('-m','--memory',dest='mem',type=int,help='total available memory to be used in Gb')
 	parser.add_argument('-v','--version',action='version', version='%(prog)s v1.0 Distributed (MPI version)')
 
 	options = parser.parse_args()
@@ -121,6 +135,7 @@ if __name__ == '__main__':
 	blast_ref_database = options.blast_ref_database
 	win = options.win
 	te = options.te
+	mem = options.mem
 	if readsFilePath == None:
 		if rank == 0:
 			print('Missing path of reads file. Exiting')
@@ -145,12 +160,16 @@ if __name__ == '__main__':
 		if rank == 0:
 			print('Missing name of the TE family. Exiting')
 		sys.exit(0)
+	if mem == None:
+		mem = int(((virtual_memory().total / 1024) / 1024) / 1024) # to convert total memory in Gb
+		if rank == 0:
+			print('WARNING: Missing available memory to be used. Using by default: '+str(mem)+'Gb')
 
 	########################################################
 	### creating (if does not exist) the output directory
 	if rank == 0:
 		if os.path.exists(out):
-			print("WARNING: output directory "+out+" already exist, be carefully")
+			print("WARNING: output directory "+out+" already exist, be careful")
 		else:
 			os.mkdir(out)
 
@@ -198,11 +217,14 @@ if __name__ == '__main__':
 
 		### shared variables
 		numReads = int(fileLen)/4
-		reads_per_procs = int(int(numReads)/(threads - 1))+1
-		remain = int(numReads) % threads
-
+		reads_per_procs = int(numReads/(threads - 1)) + 1
+		remain = numReads % (threads - 1 )
+		mem_per_proc = int(mem / (threads - 1))
 		blastfile = out+"/"+indname+'-vs-'+te+'.fa.bl'
 		outputfile = out+"/"+indname+'-vs-'+te+'.bed'
+
+		########################################################
+		### MPI region
 
 		### master process
 		if rank == 0:
@@ -211,16 +233,15 @@ if __name__ == '__main__':
 			start = time.time()
 			for th in range(1, threads):
 				send_mpi_msg(th,1,serialize=True)
-				# comm.send(1, dest=th)
 
 			finalBlastFile = open(blastfile, 'w')
 			for th in range(1, threads):
-				data_dict = receive_mpi_msg(deserialize=True)
-				data = data_dict['data']
-				# data = comm.recv(source=th)
+				#data_dict = receive_mpi_msg(deserialize=True)
+				#data = data_dict['data']
+				data = comm.recv(source=th)
 				thFile =  open(out+"/"+indname+'-vs-'+te+'.fa.bl.'+str(th), 'r').readlines()
 				for line in thFile:
-					finalBlastFile.write(line)
+					finalBlastFile.write(line.replace("\n", "")+"\n")
 				thFile = None
 				os.remove(out+"/"+indname+'-vs-'+te+'.fa.bl.'+str(th))
 				os.remove(out+"/"+indname+"-vs-"+te+".bam."+str(th))
@@ -244,7 +265,8 @@ if __name__ == '__main__':
 				data_dict = receive_mpi_msg(deserialize=True)
 				partialDic = data_dict['data']
 
-				# join all partial results
+				########################################################
+				### join all partial results
 				for key in partialDic.keys():
 					if key in DiccReadHits.keys():
 						for chrs in partialDic[key]:
@@ -255,7 +277,7 @@ if __name__ == '__main__':
 
 			fileDict = open(out+"/fileDict.tmp.csv", "w")
 			for key in DiccReadHits.keys():
-				fileDict.write(key+","+",".join(DiccReadHits[key])+"\n")
+				fileDict.write(key+","+str(len(DiccReadHits[key]))+"\n")
 			fileDict.close()
 			DiccReadHits = None
 
@@ -276,7 +298,7 @@ if __name__ == '__main__':
 					openoutputfile.write(line+"\n")
 			openoutputfile.close()
 			finish = time.time()
-			os.remove(out+"/fileDict.tmp.csv")
+			#os.remove(out+"/fileDict.tmp.csv")
 			print("filter reads with one hit done! time="+str(finish - start))
 
 			########################################################
@@ -297,7 +319,7 @@ if __name__ == '__main__':
 			finish = time.time()
 			print("pos-processing TIPs done! time="+str(finish - start))
 		
-		### slave processes
+		### worker processes
 		else:
 			data_dict = receive_mpi_msg(deserialize=True)
 			data = data_dict['data']
@@ -345,14 +367,15 @@ if __name__ == '__main__':
 			### blast against reference genome for identification insertion point
 			blastCommand = 'blastn -db '+blast_ref_database+' -query '+out+"/"+indname+'-vs-'+te+'.fa.'+str(rank)+' -out '+out+"/"+indname+'-vs-'+te+'.fa.bl.'+str(rank)+' -outfmt "6 sseqid sstart send qseqid"  -num_threads 1 -evalue 1e-20'
 			subprocess.run(blastCommand, shell=True)
-			send_mpi_msg(0, 1, serialize=True)
+			comm.send(1, dest=0)
+			#send_mpi_msg(0, 1, serialize=True)
 
 			########################################################
 			### launch dic creation
 			data_dict = receive_mpi_msg(deserialize=True)
 			fileLen = data_dict['data']
-			lines_per_procs = int(int(fileLen)/int(threads-1))+1
-			remain = int(fileLen) % int(threads)
+			lines_per_procs = int(int(fileLen)/int(threads - 1))+1
+			remain = int(fileLen) % int(threads - 1)
 			th = rank - 1
 			if th < remain:
 				init = th * (lines_per_procs + 1)
@@ -364,7 +387,7 @@ if __name__ == '__main__':
 			send_mpi_msg(0, partial, serialize=True)
 			
 			########################################################
-			# searching for reads with maximum 1 hits
+			# searching for reads with maximum 1 hit
 			data_dict = receive_mpi_msg(deserialize=True)
 			diccFromMaster = data_dict['data']
 			th = rank - 1
@@ -374,7 +397,7 @@ if __name__ == '__main__':
 			else:
 				init = th * lines_per_procs + remain
 				end = init + lines_per_procs
-			partial = parseBlastOutput(blastfile, rank, init, end)
+			partial = parseBlastOutput(blastfile, rank, init, end, mem_per_proc)
 			send_mpi_msg(0, partial, serialize=True)
 
 		if rank == 0:
