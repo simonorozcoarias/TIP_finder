@@ -298,7 +298,7 @@ if __name__ == '__main__':
 					openoutputfile.write(line+"\n")
 			openoutputfile.close()
 			finish = time.time()
-			#os.remove(out+"/fileDict.tmp.csv")
+			os.remove(out+"/fileDict.tmp.csv")
 			print("filter reads with one hit done! time="+str(finish - start))
 
 			########################################################
