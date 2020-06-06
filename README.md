@@ -3,12 +3,27 @@ A pipeline that aim to find TIPs activity from TE dynamics, using the methodolog
 
 Installation:
 We highly recommend to use and install Python packages into a Anaconda enviorenment. To create, execute the following command:
+
   conda create -n tip_finder
+  
 So, activate it
+
   conda activate tip_finder
+  
 Then install required python packages
+
   conda install -c anaconda mpi4py
+  
   conda install -c anaconda psutil
+  
+for TIP_finder_utils
+
+  conda install -c anaconda pandas 
+  
+  conda install -c conda-forge matplotlib
+  
+  conda install -c anaconda seaborn
+  
 
 Usage:
 
