@@ -33,11 +33,11 @@ Previos Steps:
 
 NOTE: the chr_list.txt must have following structure:
 
-ChName1<TAB>length
+ChName1\tlength
   
-ChName2<TAB>length
+ChName2\tlength
   
-ChName3<TAB>length  
+ChName3\tlength  
 
 
 mpirun -np num_processes -hosts=$SLURM_JOB_NODELIST python3.8 TIP_finder.py -f file_reads.txt -o folder_results -t TE_family_name -b bowtie2_indexed_file -l blast_formated_reference_genome.fasta -w 10_kb_splitted_reference_genome.bed
