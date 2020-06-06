@@ -20,7 +20,7 @@ import argparse
 
 def createFinalMatrix(te, directory, outputDir, map_th):
 	if os.path.exists(outputDir):
-		print("WARNING: output directory: "+outputDir+" already exist, be carefully")
+		print("WARNING: output directory: "+outputDir+" already exist, be careful")
 	else:
 		os.mkdir(outputDir)
 
