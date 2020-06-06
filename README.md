@@ -31,7 +31,7 @@ Previos Steps:
 - makeblastdb -in reference_genome.fasta -dbtype nucl
 - bedtools makewindows -g chr_list.txt -w 10000 > reference_genome_10kbwindows.bed
 
-NOTE: the chr_list.txt must have following structure:
+NOTE: the chr_list.txt must have following structure (separated by tabs):
 
 Ch1Name <TAB> length
   
