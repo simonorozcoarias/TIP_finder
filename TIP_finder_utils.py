@@ -187,11 +187,11 @@ def associationTest(filetips, individuals, prob):
 	assocations.to_csv(outputDir+'/TIPS_with_association.csv')
 
 if __name__ == '__main__':
-	print("\n######################################################################")
-	print("#                                                                    #")
+	print("\n#######################################################################")
+	print("#                                                                     #")
 	print("# TIP_finder Utils: Transposon Polymorphic Insertion finder utilities #")
-	print("#                                                                    #")
-	print("######################################################################\n")
+	print("#                                                                     #")
+	print("#######################################################################\n")
 
 	### read parameters
 	parser = argparse.ArgumentParser()
