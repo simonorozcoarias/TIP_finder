@@ -28,6 +28,7 @@ for TIP_finder_utils
 Usage:
 
 Previos Steps:
+- bowtie2-build TYPE_ref_retrotes.fa TYPE_ref_retrotes
 - makeblastdb -in reference_genome.fasta -dbtype nucl
 - bedtools makewindows -g chr_list.txt -w 10000 > reference_genome_10kbwindows.bed
 
