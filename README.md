@@ -16,6 +16,8 @@ Then install required python packages
   
   conda install -c anaconda psutil
   
+  conda install -c bioconda magicblast
+  
 for TIP_finder_utils
 
   conda install -c anaconda pandas 
