@@ -31,10 +31,12 @@ Usage:
 
 Previos Steps:
 - bowtie2-build TYPE_ref_retrotes.fa TYPE_ref_retrotes
-- makeblastdb -in reference_genome.fasta -dbtype nucl
+- makeblastdb -in reference_genome.fasta -dbtype nucl (if you are using magicblast, The #-parse_seqids# option is required)
 - bedtools makewindows -g chr_list.txt -w 10000 > reference_genome_10kbwindows.bed
 
-NOTE: the chr_list.txt must have following structure (separated by tabs):
+NOTE: 
+
+- the chr_list.txt must have following structure (separated by tabs):
 
 Ch1Name <TAB> length
   
