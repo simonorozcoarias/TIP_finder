@@ -126,6 +126,7 @@ if __name__ == '__main__':
 	parser.add_argument('-w','--windows',required=True, type=str,dest='win',help='path to reference genome 10kbp windows in bed format')
 	parser.add_argument('-t','--te',required=True, type=str,dest='te',help='name of the TE family')
 	parser.add_argument('-m','--memory',dest='mem',type=int,help='total available memory to be used in Gb')
+	parser.add_argument('-a','--alg',dest='align',type=str,help='Algorithm to blast (magic or blast)')
 	parser.add_argument('-v','--version',action='version', version='%(prog)s v1.0 Distributed (MPI version)')
 
 	options = parser.parse_args()
@@ -136,34 +137,43 @@ if __name__ == '__main__':
 	win = options.win
 	te = options.te
 	mem = options.mem
+	align = options.align
 	if readsFilePath == None:
 		if rank == 0:
-			print('Missing path of reads file. Exiting')
+			print('FATAL ERROR. Missing path of reads file. Exiting')
 		sys.exit(0)
 	if out == None:
 		if rank == 0:
-			print('Missing path of output directory. Exiting')
+			print('FATAL ERROR. Missing path of output directory. Exiting')
 		sys.exit(0)
 	if DB == None:
 		if rank == 0:
-			print('Missing path to TE library. Exiting')
+			print('FATAL ERROR. Missing path to TE library. Exiting')
 		sys.exit(0)
 	if blast_ref_database == None:
 		if rank == 0:
-			print('Missing path to reference blast genome. Exiting')
+			print('FATAL ERROR. Missing path to reference blast genome. Exiting')
 		sys.exit(0)
 	if win == None:
 		if rank == 0:
-			print('Missing path to 10kb-splitted reference genome. Exiting')
+			print('FATAL ERROR. Missing path to 10kb-splitted reference genome. Exiting')
 		sys.exit(0)
 	if te == None:
 		if rank == 0:
-			print('Missing name of the TE family. Exiting')
+			print('FATAL ERROR. Missing name of the TE family. Exiting')
 		sys.exit(0)
 	if mem == None:
 		mem = int(((virtual_memory().total / 1024) / 1024) / 1024) # to convert total memory in Gb
 		if rank == 0:
 			print('WARNING: Missing available memory to be used. Using by default: '+str(mem)+'Gb')
+	if align == None:
+		if rank == 0:
+			print('WARNING: Missing algorithm to blast. Using by default: blast')
+		align = "blast"
+	elif align not in ["blast", "magic"]:
+		if rank == 0:
+			print('WARNING: Incorrect value of -a parameter. Using by default: blast')
+		align = "blast"
 
 	########################################################
 	### creating (if does not exist) the output directory
@@ -190,6 +200,16 @@ if __name__ == '__main__':
 		if extFile2 not in [".fastq", ".fq"]:
 			if rank == 0:
 				print('FATAL ERROR processing '+indname+': reverse read file does not have the correct extension (fastq or fq). Exiting')
+			sys.exit(0)
+
+		if not os.path.exists(fq1):
+			if rank == 0:
+				print('FATAL ERROR processing '+indname+': forward read file does not exist')
+			sys.exit(0)
+
+		if not os.path.exists(fq2):
+			if rank == 0:
+				print('FATAL ERROR processing '+indname+': reverse read file does not exist')
 			sys.exit(0)
 		
 		if threads < 2:
@@ -365,10 +385,19 @@ if __name__ == '__main__':
 
 			########################################################
 			### blast against reference genome for identification insertion point
-			blastCommand = 'blastn -db '+blast_ref_database+' -query '+out+"/"+indname+'-vs-'+te+'.fa.'+str(rank)+' -out '+out+"/"+indname+'-vs-'+te+'.fa.bl.'+str(rank)+' -outfmt "6 sseqid sstart send qseqid"  -num_threads 1 -evalue 1e-20'
-			subprocess.run(blastCommand, shell=True)
-			comm.send(1, dest=0)
-			#send_mpi_msg(0, 1, serialize=True)
+			if align == "blast":
+				blastCommand = 'blastn -db '+blast_ref_database+' -query '+out+"/"+indname+'-vs-'+te+'.fa.'+str(rank)+' -out '+out+"/"+indname+'-vs-'+te+'.fa.bl.'+str(rank)+' -outfmt "6 sseqid sstart send qseqid"  -num_threads 1 -evalue 1e-20'
+				subprocess.run(blastCommand, shell=True)
+				comm.send(1, dest=0)
+			else:
+				blastCommand = 'magicblast -db '+blast_ref_database+' -query '+out+"/"+indname+'-vs-'+te+'.fa.'+str(rank)+' -out '+out+"/"+indname+'-vs-'+te+'.fa.bl.magic.'+str(rank)+' -outfmt tabular -num_threads 1 -perc_identity 100'
+				subprocess.run(blastCommand, shell=True)
+
+				# deleting unnecesary columns
+				filterCommand = "sed '1,3d' "+out+"/"+indname+'-vs-'+te+'.fa.bl.magic.'+str(rank)+" | awk '{if($2 != \"-\"){print $2\"\\t\"$9\"\\t\"$10\"\\t\"$1}}' > "+out+"/"+indname+'-vs-'+te+'.fa.bl.'+str(rank)
+				subprocess.run(filterCommand, shell=True)
+				os.remove(out+"/"+indname+'-vs-'+te+'.fa.bl.magic.'+str(rank))
+				comm.send(1, dest=0)
 
 			########################################################
 			### launch dic creation
