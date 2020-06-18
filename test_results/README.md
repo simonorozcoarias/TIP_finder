@@ -4,7 +4,7 @@ These results were obtained using the utilities available in TIP_finder_utils.py
 ## Genomic datasets used
 All datasets used to test TIP_finder are freely available in the SRA database (NCBI).
 
-### Case patients
+### Datasets related to breast cancer (cases)
 
 |Accession|# of Spots |	#of Bases| Size |
 |---------|-----------|----------|------|
@@ -39,7 +39,7 @@ All datasets used to test TIP_finder are freely available in the SRA database (N
 |SRR944983|	182,795,197| 36.6G | 21.7Gb |
 |SRR944984|	182,335,586| 36.5G | 21.6Gb |
 
-### Control patients
+### Datasets without health condition (controls)
 
 |Accession|# of Spots |	#of Bases| Size |
 |---------|-----------|----------|------|
