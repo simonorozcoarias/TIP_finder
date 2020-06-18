@@ -111,6 +111,7 @@ If the confidence level is not specified, TIP_finder will use as default 0.95
 if you need more information about how to run TIP_finder please execute:
 ```
 python3 TIP_finder.py -h
+python3 TIP_finder_utils.py -h
 ```
 
 ## References:
