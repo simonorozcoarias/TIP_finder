@@ -269,6 +269,9 @@ if __name__ == '__main__':
 		if prob == None:
 			print('WARNING: Missing confidence level (-n or --confidence-level). Using by default 0.95')
 			prob = 0.95
+		elif prob > 1:
+			print('FATAL ERROR: confidence level greater than 1, please especified it again (as an example 0.95)')
+			sys.exit(0)
 		### to count number of TIPs by cases
 		individuals = countPerChrs(matrixPathCase1, matrixPathCase2, outputDir, 0)
 		print(str(individuals)+" individuals processed")
