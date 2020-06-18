@@ -52,8 +52,35 @@ dataset4Name,path_to_forward_reads.fastq,path_to_reverse_reads.fastq
 ```
 ### Execution
 ```
-mpirun -np num_processes -hosts=$SLURM_JOB_NODELIST python3.8 TIP_finder.py -f file_reads.txt -o folder_results -t TE_family_name -b TYPE_ref_retrotes -l reference_genome.fasta -w reference_genome_10kbwindows.bed
+mpirun -np num_processes -hosts=server_name python3.8 TIP_finder.py -f file_reads.txt -o folder_results -t TE_family_name -b TYPE_ref_retrotes -l reference_genome.fasta -w reference_genome_10kbwindows.bed
 ```
+Where num_processes are the number of processors available in yout system and server_name is the name of the server where TIP_finder will run.
+
+### NOTE
+If you want to run TIP_finder using a SLURM job, to can use following script:
+```
+#!/bin/bash
+
+#SBATCH --job-name=TIP_finder
+#SBATCH -D /path/to/your/working/directory
+#SBATCH --output=output_file.out
+#SBATCH -e error_file.err
+#SBATCH -n number_of_processors
+#SBATCH -N 1
+
+# remeber to load the prerequesities such as bowtie2, samtools, etc (for example using module load if it exists in your system).
+
+conda activate tip_finder
+
+echo "Running in $SLURM_JOB_NODELIST"
+mpirun -np number_of_processors -hosts=$SLURM_JOB_NODELIST python3.8 TIP_finder.py -f file_reads.txt -o folder_results -t TE_family_name -b TYPE_ref_retrotes -l reference_genome.fasta -w reference_genome_10kbwindows.bed
+```
+### Help
+if you need more information about how to run TIP_finder please execute:
+```
+python3 TIP_finder.py -h
+```
+
 ## References:
 
 [1] Carpentier, M. C., Manfroi, E., Wei, F. J., Wu, H. P., Lasserre, E., Llauro, C., ... & Panaud, O. (2019). Retrotranspositional landscape of Asian rice revealed by 3000 genomes. Nature communications, 10(1), 1-12.
