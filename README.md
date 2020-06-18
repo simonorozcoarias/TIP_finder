@@ -1,4 +1,4 @@
-# TIP_finder
+# TIP_finder: An HPC software to detect transposable element insertion polymorphism in large genomic datasets
 A pipeline that aim to find TIPs activity from TE dynamics, using the methodology proposed by TRACKPOSON [1] accelerating the execution time up to 55 times in huge genomic datasets. TIP_finder applies a parallel strategy to work under HPC techniques efficiently, and has the capacity of scalability over many computational nodes (or servers) and multi-core architectures, which make it especially functional for applications in massive sequencing projects that demands the current (post) genomic era. 
 
 ### Prerequisites
