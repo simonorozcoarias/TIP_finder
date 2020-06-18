@@ -2,7 +2,7 @@
 A pipeline that aim to find TIPs activity from TE dynamics, using the methodology proposed by TRACKPOSON [1] accelerating the execution time up to 55 times in huge genomic datasets. TIP_finder applies a parallel strategy to work under HPC techniques efficiently, and has the capacity of scalability over many computational nodes (or servers) and multi-core architectures, which make it especially functional for applications in massive sequencing projects that demands the current (post) genomic era. 
 
 ### Prerequisites
-TIP_finder used following bioinformatic software: Bowtie2 (v. 2.3.4.1) in order to map the paired reads of genomic data onto indexed consensus sequence of each TEs/HERVs family, Samtools (v. 1.9) to process bowtie2 output and to keep only unmapped reads, bedtools (v. 2.26.0) to split the reference genome into 10kb windows and to count reads in these windows, and NCBI-blastn (v. 2.10.0) or Magic-BLAST to align the unmapped reads.
+TIP_finder used following bioinformatic software: Bowtie2 (v. 2.3.4.1) in order to map the paired reads of genomic data onto indexed consensus sequence of each TEs/HERVs family, Samtools (v. 1.9) to process bowtie2 output and to keep only unmapped reads, bedtools (v. 2.26.0) to split the reference genome into 10kb windows and to count reads in these windows, and NCBI-blastn (v. 2.10.0) or Magic-BLAST to align the unmapped reads. Please go to Instalation section to see how to install them into an Anaconda environment.
 
 TIP_finder was developed using Python3 (3.8) and following libraries: sys, time, os, subprocess, argparse, MPI4py. In the other hand, TIP_finder_utils.py requires the additional libraries: math, Pandas, matplotlib, Seaborn and SciPy.
 
@@ -19,13 +19,20 @@ Then install required python packages
 ```
 conda install -c anaconda mpi4py
 conda install -c anaconda psutil
-conda install -c bioconda magicblast
 ```
 for TIP_finder_utils
 ```
 conda install -c anaconda pandas 
 conda install -c conda-forge matplotlib
 conda install -c anaconda seaborn
+```
+Finally, install prerequisities:
+```
+conda install -c bioconda bowtie2
+conda install -c bioconda samtools
+conda install -c bioconda bedtools
+conda install -c bioconda blast
+conda install -c bioconda magicblast
 ```
 ## Usage:
 
@@ -54,7 +61,7 @@ dataset4Name,path_to_forward_reads.fastq,path_to_reverse_reads.fastq
 ```
 mpirun -np num_processes -hosts=server_name python3.8 TIP_finder.py -f file_reads.txt -o folder_results -t TE_family_name -b TYPE_ref_retrotes -l reference_genome.fasta -w reference_genome_10kbwindows.bed
 ```
-Where num_processes are the number of processors available in yout system and server_name is the name of the server where TIP_finder will run.
+Where num_processes are the number of processors available in your system and server_name is the name of the server where TIP_finder will run.
 
 ### NOTE
 If you want to run TIP_finder using a SLURM job, to can use following script:
