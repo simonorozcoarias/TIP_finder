@@ -33,14 +33,22 @@ conda install -c anaconda seaborn
 - bowtie2-build TYPE_ref_retrotes.fa TYPE_ref_retrotes
 - makeblastdb -in reference_genome.fasta -dbtype nucl (if you are using magicblast, The -parse_seqids option is required)
 - bedtools makewindows -g chr_list.txt -w 10000 > reference_genome_10kbwindows.bed
+- to create the comma-separated read_files.txt, which contains three columns: 1) datasets name, 2) path to the forward-reads file, 3) path to the reverse-reads file. 
 
 ### NOTE: 
 
 - the chr_list.txt must have following structure (separated by tabs):
 ```
-Ch1Name <TAB> length
-Ch2Name <TAB> length
-Ch3Name <TAB> length  
+Ch1Name<TAB>length
+Ch2Name<TAB>length
+Ch3Name<TAB>length  
+```
+- the read_files.txt musth have following structure (separated by commas):
+```
+dataset1Name,path_to_forward_reads.fastq,path_to_reverse_reads.fastq
+dataset2Name,path_to_forward_reads.fastq,path_to_reverse_reads.fastq
+dataset3Name,path_to_forward_reads.fastq,path_to_reverse_reads.fastq
+dataset4Name,path_to_forward_reads.fastq,path_to_reverse_reads.fastq
 ```
 ### Execution
 ```
