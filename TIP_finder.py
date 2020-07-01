@@ -264,8 +264,6 @@ if __name__ == '__main__':
 					finalBlastFile.write(line.replace("\n", "")+"\n")
 				thFile = None
 				os.remove(out+"/"+indname+'-vs-'+te+'.fa.bl.'+str(th))
-				os.remove(out+"/"+indname+"-vs-"+te+".bam."+str(th))
-				os.remove(out+"/"+indname+'-vs-'+te+'.fa.'+str(th))
 			finalBlastFile.close()
 			finish = time.time()
 			print("Mapping and blast done! time="+str(finish - start))
@@ -382,12 +380,13 @@ if __name__ == '__main__':
 			### keep only unmap reads with flag unmap/map
 			keepingCommand = 'samtools view '+out+"/"+indname+'-vs-'+te+'.bam.'+str(rank)+' | awk -F "\\t" \'{if ( ($1!~/^@/) && (($2==69) || ($2==133) || ($2==165) || ($2==181) || ($2==101) || ($2==117)) ) {print ">"$1"\\n"$10}}\' > '+out+"/"+indname+'-vs-'+te+'.fa.'+str(rank)
 			subprocess.run(keepingCommand, shell=True)
-
+			os.remove(out+"/"+indname+'-vs-'+te+'.bam.'+str(rank))
 			########################################################
 			### blast against reference genome for identification insertion point
 			if align == "blast":
 				blastCommand = 'blastn -db '+blast_ref_database+' -query '+out+"/"+indname+'-vs-'+te+'.fa.'+str(rank)+' -out '+out+"/"+indname+'-vs-'+te+'.fa.bl.'+str(rank)+' -outfmt "6 sseqid sstart send qseqid"  -num_threads 1 -evalue 1e-20'
 				subprocess.run(blastCommand, shell=True)
+				os.remove(out+"/"+indname+'-vs-'+te+'.fa.'+str(rank))
 				comm.send(1, dest=0)
 			else:
 				blastCommand = 'magicblast -db '+blast_ref_database+' -query '+out+"/"+indname+'-vs-'+te+'.fa.'+str(rank)+' -out '+out+"/"+indname+'-vs-'+te+'.fa.bl.magic.'+str(rank)+' -outfmt tabular -num_threads 1 -perc_identity 100'
@@ -397,6 +396,7 @@ if __name__ == '__main__':
 				filterCommand = "sed '1,3d' "+out+"/"+indname+'-vs-'+te+'.fa.bl.magic.'+str(rank)+" | awk '{if($2 != \"-\"){print $2\"\\t\"$9\"\\t\"$10\"\\t\"$1}}' > "+out+"/"+indname+'-vs-'+te+'.fa.bl.'+str(rank)
 				subprocess.run(filterCommand, shell=True)
 				os.remove(out+"/"+indname+'-vs-'+te+'.fa.bl.magic.'+str(rank))
+				os.remove(out+"/"+indname+'-vs-'+te+'.fa.'+str(rank))
 				comm.send(1, dest=0)
 
 			########################################################
