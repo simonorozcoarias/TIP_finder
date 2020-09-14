@@ -118,7 +118,7 @@ python3 TIP_finder_utils.py -h
 
 [1] Carpentier, M. C., Manfroi, E., Wei, F. J., Wu, H. P., Lasserre, E., Llauro, C., ... & Panaud, O. (2019). Retrotranspositional landscape of Asian rice revealed by 3000 genomes. Nature communications, 10(1), 1-12.
 
-## Citaction:
+## Citation:
 If you used TIP_finder in your research, please cite our paper:
 
 Orozco-Arias, S.; Tobon-Orozco, N.; Piña, J.S.; Jiménez-Varón, C.F.; Tabares-Soto, R.; Guyot, R. TIP_finder: An HPC Software to Detect Transposable Element Insertion Polymorphisms in Large Genomic Datasets. Biology 2020, 9, 281.
