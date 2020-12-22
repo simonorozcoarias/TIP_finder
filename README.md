@@ -64,7 +64,7 @@ mpirun -np num_processes -hosts=server_name python3.8 TIP_finder.py -f file_read
 Where num_processes are the number of processors available in your system and server_name is the name of the server where TIP_finder will run.
 
 ### NOTE
-If you want to run TIP_finder using a SLURM job, to can use following script:
+If you want to run TIP_finder using a SLURM job, you can use the following script:
 ```
 #!/bin/bash
 
