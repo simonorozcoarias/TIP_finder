@@ -9,7 +9,7 @@ TIP_finder was developed using Python3 (3.8) and following libraries: sys, time,
 ## Installation:
 We highly recommend to use and install Python packages within an Anaconda enviroment. To create, execute the command below:
 ```
-conda create -n tip_finder
+conda create -n tip_finder python=3.8
 ```
 So, activate it
 ```
