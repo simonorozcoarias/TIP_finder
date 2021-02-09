@@ -50,6 +50,8 @@ Ch1Name<TAB>length
 Ch2Name<TAB>length
 Ch3Name<TAB>length  
 ```
+- The names of the sequences (or chromosomes) must be the same as those in the reference_genome.fasta file, otherwise TIP_finder will not be able to locate the positions of the TIPs, producing empty results.
+
 - the read_files.txt must have following structure (separated by commas):
 ```
 dataset1Name,path_to_forward_reads.fastq,path_to_reverse_reads.fastq
