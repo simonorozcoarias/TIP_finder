@@ -59,6 +59,8 @@ dataset2Name,path_to_forward_reads.fastq,path_to_reverse_reads.fastq
 dataset3Name,path_to_forward_reads.fastq,path_to_reverse_reads.fastq
 dataset4Name,path_to_forward_reads.fastq,path_to_reverse_reads.fastq
 ```
+- Sequences in TYPE_ref_retrotes.fa file must have unique IDs, otherwise bowtie2 will fail.
+
 ### TIP_finder execution
 ```
 mpirun -np num_processes -hosts=server_name python3.8 TIP_finder.py -f file_reads.txt -o folder_results -t TE_family_name -b TYPE_ref_retrotes -l reference_genome.fasta -w reference_genome_10kbwindows.bed
