@@ -7,7 +7,7 @@ TIP_finder used following bioinformatic software: Bowtie2 (v. 2.3.4.1) in order 
 TIP_finder was developed using Python3 (3.8) and following libraries: sys, time, os, subprocess, argparse, MPI4py. In the other hand, TIP_finder_utils.py requires the additional libraries: math, Pandas, matplotlib, Seaborn and SciPy.
 
 ## Installation:
-We highly recommend to use and install Python packages within an Anaconda enviroment. To create, execute the command below:
+We highly recommend to use and install Python packages within an Anaconda environment. To create, execute the command below:
 ```
 conda create -n tip_finder python=3.8
 ```
